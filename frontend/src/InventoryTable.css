@@ -1,0 +1,58 @@
+.table-container {
+    width: 100%;
+    margin-top: 30px;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    /*rounded corners on edges even with overflow*/
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    /*remove double borders in cells*/
+    text-align: left;
+}
+
+.inventory-table th,
+.inventory-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #333;
+}
+
+.inventory-table th {
+    background-color: var(--bg-color);
+    color: var(--text-secondary);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.inventory-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 10px;
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.btn-edit {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-delete {
+    background-color: var(--danger);
+    color: white;
+}
