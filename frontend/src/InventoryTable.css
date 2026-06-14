@@ -13,6 +13,7 @@
     border-collapse: collapse;
     /*remove double borders in cells*/
     text-align: left;
+    table-layout: fixed;
 }
 
 .inventory-table th,
@@ -56,3 +57,10 @@ button:hover {
     background-color: var(--danger);
     color: white;
 }
+
+.inventory-table th:nth-child(1) { width: 10%; } /* id */
+.inventory-table th:nth-child(2) { width: 30%; } /* name */
+.inventory-table th:nth-child(3) { width: 20%; } /* category */
+.inventory-table th:nth-child(4) { width: 10%; } /* quantity */
+.inventory-table th:nth-child(5) { width: 15%; } /* price */
+.inventory-table th:nth-child(6) { width: 15%; } /* actions */
