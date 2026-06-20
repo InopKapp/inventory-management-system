@@ -46,15 +46,6 @@ form {
     font-family: inherit;
 }
 
-.input-group input {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #333;
-    background-color: #0f172a;
-    color: var(--text-primary);
-    font-family: inherit;
-}
-
 /* change the border color when the user clicks inside the box */
 .input-group input:focus {
     outline: none;

@@ -1,4 +1,11 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from './Login';
+import Register from './Register';
+import ProtectedRoute from './ProtectedRoute';
+import ClientStorefront from './ClientStoreFront';
+import DealerDashboard from './DealerDashboard';
+import AllOrdersTable from './AllOrdersTable';
 import './App.css'
 import Header from './Header'
 import InventoryTable from './InventoryTable'
@@ -9,7 +16,9 @@ function App() {
 
   //get (read)
   useEffect(() => {
-    fetch('http://localhost:3001/api/items')
+    fetch('http://localhost:3001/api/items', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
       .then((response) => response.json())
       .then((data) => setItems(data))
       .catch((error) => console.error("Error fetching data:", error));
@@ -20,7 +29,10 @@ function App() {
     try {
       const response = await fetch('http://localhost:3001/api/items', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify(newItem),
       });
 
@@ -38,6 +50,7 @@ function App() {
     try {
       await fetch(`http://localhost:3001/api/items/${id}`, {
         method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       const updatedItems = items.filter((item) => item.id !== id);
       setItems(updatedItems);
@@ -51,7 +64,10 @@ function App() {
     try {
       await fetch(`http://localhost:3001/api/items/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify(updatedItem),
       });
 
@@ -63,30 +79,37 @@ function App() {
     }
   }
 
-  // const addItem = (newItem) => {
-  //   const id = Date.now();
-  //   const itemWithId = { ...newItem, id: id };
-  //   setItems([...items, itemWithId]);
-  // }
-  // const deleteItem = (id) => {
-  //   const updatedItems = items.filter((item) => item.id !== id);
-  //   setItems(updatedItems);
-  // }
-  // const editItem = (id, updatedItem) => {
-  //   const updatedList = items.map((item) => (item.id === id ? updatedItem : item));
-  //   setItems(updatedList);
-  // }
   return (
     <>
       <Header />
-      <div className="app-container">
-        <h1>Inventory Management System</h1>
-        <AddItemForm onAddItem={addItem} />
-        <InventoryTable inventoryData={items}
-          onDeleteItem={deleteItem}
-          onEditItem={editItem}
-        />
-      </div>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/admin" element={
+          <ProtectedRoute requiredRole="admin">
+            <div className="app-container">
+              <h1>Inventory Management System</h1>
+              <AddItemForm onAddItem={addItem} />
+              <InventoryTable inventoryData={items}
+                onDeleteItem={deleteItem}
+                onEditItem={editItem}
+              />
+              <AllOrdersTable />
+            </div>
+          </ProtectedRoute>
+        } />
+        <Route path="/client" element={
+          <ProtectedRoute requiredRole="client">
+            <ClientStorefront />
+          </ProtectedRoute>
+        } />
+        <Route path="/dealer" element={
+          <ProtectedRoute requiredRole="dealer">
+            <DealerDashboard />
+          </ProtectedRoute>
+        } />
+      </Routes>
     </>
   )
 }
