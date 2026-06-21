@@ -15,9 +15,9 @@ function Login() {
         const role = localStorage.getItem('role');
 
         if (token) {
-            if (role === 'admin') navigate('/admin');
-            else if (role === 'dealer') navigate('/dealer');
-            else navigate('/client');
+            if (role === 'admin') window.location.href = '/admin';
+            else if (role === 'dealer') window.location.href = '/dealer';
+            else window.location.href = '/client';
         }
     }, []);
 
@@ -46,13 +46,13 @@ function Login() {
             localStorage.setItem('username', username);
 
             if (data.role === 'admin') {
-                navigate('/admin');
+                window.location.href = '/admin';
             }
             else if (data.role === 'dealer') {
-                navigate('/dealer');
+                window.location.href = '/dealer';
             }
             else {
-                navigate('/client');
+                window.location.href = '/client';
             }
         }
         catch (err) {
@@ -85,16 +85,16 @@ function Login() {
                     </div>
                     <button type="submit" className="login-btn">Sign In</button>
                 </form>
-                {error && <p className="error-message">{error}</p>}
-                <p style={{ marginTop: '20px', fontSize: '14px', color: 'var(--text-primary)' }}>
+                {/* Link to go to register screen */}
+                <p className="auth-link-text">
                     Don't have an account? <span
-                        style={{ color: 'var(--accent-color)', cursor: 'pointer', textDecoration: 'underline' }}
+                        className="auth-link"
                         onClick={() => navigate('/register')}
                     >
                         Sign Up here
                     </span>
                 </p>
-
+                {error && <p className="error-message">{error}</p>}
             </div>
         </div>
     );

@@ -38,19 +38,6 @@
     color: var(--text-primary);
 }
 
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    /* makes the box a perfect circle */
-    background-color: var(--accent-color);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-}
-
 .navbar-profile {
     display: flex;
     gap: 15px;
@@ -70,4 +57,28 @@
 
 .logout-btn:hover {
     opacity: 0.8;
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: 1px solid var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+}
+
+.theme-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* light mode specific hover */
+body.light-mode .theme-toggle-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }

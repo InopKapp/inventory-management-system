@@ -143,7 +143,8 @@ app.post('/api/login', (req, res) => {
 app.post('/api/orders', authenticateToken, (req, res) => {
     if (req.user.role !== 'client') return res.status(403).json({ error: "Only clients can place orders." });
 
-    const { item_id, item_name, client_username, dealer_username, quantity_ordered } = req.body;
+    const { item_id, item_name, dealer_username, quantity_ordered } = req.body;
+    const client_username = req.user.username;
     const status = 'pending';
     db.run("INSERT INTO orders (item_id, item_name, client_username, dealer_username, quantity_ordered, status) VALUES (?,?,?,?,?,?)",
         [item_id, item_name, client_username, dealer_username, quantity_ordered, status],
@@ -189,19 +190,82 @@ app.put('/api/orders/:id/status', authenticateToken, (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    db.run("UPDATE orders SET status = ? WHERE id = ?", [status, id], function (err) {
+    if (status === 'approved') {
+        // fetch the order to see quantity
+        db.get("SELECT item_id, quantity_ordered FROM orders WHERE id = ?", [id], (err, order) => {
+            if (err || !order) return res.status(500).json({ error: "Order not found." });
+
+            // check warehouse inventory
+            db.get("SELECT quantity FROM items WHERE id = ?", [order.item_id], (err, item) => {
+                if (err || !item) return res.status(500).json({ error: "Item not found in warehouse." });
+
+                if (item.quantity < order.quantity_ordered) {
+                    return res.status(400).json({ error: "Insufficient stock in warehouse to approve this order!" });
+                }
+
+                db.run("UPDATE items SET quantity = quantity - ? WHERE id = ?", [order.quantity_ordered, order.item_id], (err) => {
+                    if (err) return res.status(500).json({ error: "Failed to deduct inventory." });
+
+                    db.run("UPDATE orders SET status = 'approved' WHERE id = ?", [id], (err) => {
+                        res.json({ message: "Order approved and inventory deducted." });
+                    });
+                });
+            });
+        });
+    } else {
+        db.run("UPDATE orders SET status = ? WHERE id = ?", [status, id], function (err) {
+            if (err) return res.status(500).json({ error: "Failed to update order status." });
+            res.json({ message: `Order marked as ${status}` });
+        });
+    }
+});
+
+// fetch dealers (for client)
+app.get('/api/dealers', authenticateToken, (req, res) => {
+    db.all("SELECT username FROM users WHERE role = 'dealer'", [], (err, rows) => {
         if (err) {
-            res.status(500).json({ error: "Failed to update order status." });
+            res.status(500).json({ error: "Failed to fetch dealers." });
             return;
         }
-        if (status === 'approved') {
-            db.get("SELECT item_id, quantity_ordered FROM orders WHERE id = ?", [id], (err, order) => {
-                if (!err && order) {
-                    db.run("UPDATE items SET quantity = quantity - ? WHERE id = ?", [order.quantity_ordered, order.item_id]);
-                }
-            });
-        }
-        res.json({ message: `Order marked as ${status}` });
+        res.json(rows);
+    });
+});
+
+// delete self account (client)
+app.delete('/api/users/self', authenticateToken, (req, res) => {
+    const id = req.user.id;
+    db.run("DELETE FROM users WHERE id = ?", [id], (err) => {
+        if (err) return res.status(500).json({ error: "Failed to delete account." });
+        res.json({ message: "Account deleted successfully." });
+    });
+});
+
+// --- USER MANAGEMENT (for admin) ---
+
+// fetch all users
+app.get('/api/users', authenticateToken, (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Only admins can view users." });
+
+    db.all("SELECT id, username, role FROM users", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: "Failed to fetch users." });
+        res.json(rows);
+    });
+});
+
+
+// delete user
+app.delete('/api/users/:id', authenticateToken, (req, res) => {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: "Only admins can delete users." });
+
+    const { id } = req.params;
+
+    if (parseInt(id) === req.user.id) {
+        return res.status(400).json({ error: "You cannot delete your own active account!" });
+    }
+
+    db.run("DELETE FROM users WHERE id = ?", [id], (err) => {
+        if (err) return res.status(500).json({ error: "Failed to delete user." });
+        res.json({ message: "User deleted successfully" });
     });
 });
 

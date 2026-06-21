@@ -40,8 +40,8 @@ form {
 .input-group input {
     padding: 10px;
     border-radius: 6px;
-    border: 1px solid #333;
-    background-color: #0f172a;
+    border: 1px solid var(--text-secondary);
+    background-color: var(--bg-color);
     color: var(--text-primary);
     font-family: inherit;
 }

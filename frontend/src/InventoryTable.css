@@ -19,7 +19,7 @@
 .inventory-table th,
 .inventory-table td {
     padding: 15px 20px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--text-secondary);
 }
 
 .inventory-table th {
@@ -31,7 +31,7 @@
 }
 
 .inventory-table tr:hover {
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: rgba(128, 128, 128, 0.1);
 }
 
 button {
@@ -58,9 +58,55 @@ button:hover {
     color: white;
 }
 
-.inventory-table th:nth-child(1) { width: 10%; } /* id */
-.inventory-table th:nth-child(2) { width: 30%; } /* name */
-.inventory-table th:nth-child(3) { width: 20%; } /* category */
-.inventory-table th:nth-child(4) { width: 10%; } /* quantity */
-.inventory-table th:nth-child(5) { width: 15%; } /* price */
-.inventory-table th:nth-child(6) { width: 15%; } /* actions */
+.inventory-table input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--text-secondary);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+}
+
+.inventory-table th:nth-child(1) {
+    width: 10%;
+}
+
+/* id */
+.inventory-table th:nth-child(2) {
+    width: 25%;
+}
+
+/* name */
+.inventory-table th:nth-child(3) {
+    width: 20%;
+}
+
+/* category */
+.inventory-table th:nth-child(4) {
+    width: 10%;
+}
+
+/* quantity */
+.inventory-table th:nth-child(5) {
+    width: 15%;
+}
+
+/* price */
+.inventory-table th:nth-child(6) {
+    width: 20%;
+}
+
+.admin-history-section {
+    margin-top: 60px;
+}
+
+.btn-delete-user {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}

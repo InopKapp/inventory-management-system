@@ -1,5 +1,5 @@
 .storefront-container {
-    padding: 30px;
+    padding: 100px 30px 30px 30px;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -13,10 +13,11 @@
     margin-bottom: 40px;
 }
 
-
 .storefront-sections {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    align-items: start;
 }
 
 .card-grid {
@@ -92,4 +93,77 @@
 .status-badge.rejected {
     background-color: #ef4444;
     color: white;
+}
+
+.dealer-select-container {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--accent-color);
+}
+
+.dealer-label {
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.dealer-select {
+    padding: 8px;
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--text-secondary);
+}
+
+.cart-container {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 2px solid #10b981;
+}
+
+.cart-title {
+    color: #10b981;
+    margin-top: 0;
+}
+
+.cart-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--text-secondary);
+    padding-bottom: 10px;
+}
+
+.cart-item-text {
+    font-weight: bold;
+}
+
+.btn-remove-cart {
+    background-color: var(--danger);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.btn-checkout {
+    width: 100%;
+    padding: 12px;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
 }

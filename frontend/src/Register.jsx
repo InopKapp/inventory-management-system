@@ -84,7 +84,7 @@ function Register() {
                         <select
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
-                            style={{ padding: '12px', borderRadius: '6px', backgroundColor: 'var(--bg-color)', color: 'white', width: '100%', marginTop: '5px' }}
+                            className="register-select"
                         >
                             <option value="admin">Admin</option>
                             <option value="dealer">Dealer</option>
@@ -96,12 +96,11 @@ function Register() {
                 </form>
 
                 {error && <p className="error-message">{error}</p>}
-                {success && <p style={{ color: 'green', marginTop: '10px' }}>{success}</p>}
+                {success && <p className="success-message">{success}</p>}
 
-                {/* link to go back to the login screen */}
-                <p style={{ marginTop: '20px', fontSize: '14px', color: 'var(--text-primary)' }}>
+                <p className="auth-link-text">
                     Already have an account? <span
-                        style={{ color: 'var(--accent-color)', cursor: 'pointer', textDecoration: 'underline' }}
+                        className="auth-link"
                         onClick={() => navigate('/login')}
                     >
                         Sign In here
