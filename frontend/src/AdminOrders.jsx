@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import { socket } from './socket';
 import './InventoryTable.css';
 
@@ -13,7 +14,7 @@ function AdminOrders() {
 
     const fetchAllOrders = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/orders', {
+            const res = await fetch(`${API_URL}/api/orders`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 cache: 'no-store'
             });

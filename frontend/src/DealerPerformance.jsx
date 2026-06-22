@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import './ClientStoreFront.css';
 import './DealerDashboard.css';
 
@@ -8,7 +9,7 @@ function DealerPerformance() {
 
     useEffect(() => {
         const fetchOrders = async () => {
-            const res = await fetch(`http://localhost:3001/api/orders?dealer=${dealerUsername}`, {
+            const res = await fetch(`${API_URL}/api/orders?dealer=${dealerUsername}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 cache: 'no-store'
             });

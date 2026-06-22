@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import './InventoryTable.css';
 
 function AdminAnalytics() {
@@ -8,11 +9,11 @@ function AdminAnalytics() {
     useEffect(() => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
-            const ordersRes = await fetch('http://localhost:3001/api/orders', { headers: { 'Authorization': `Bearer ${token}` } });
+            const ordersRes = await fetch(`${API_URL}/api/orders`, { headers: { 'Authorization': `Bearer ${token}` } });
             const ordersData = await ordersRes.json();
             setOrders(ordersData);
 
-            const usersRes = await fetch('http://localhost:3001/api/users', { headers: { 'Authorization': `Bearer ${token}` } });
+            const usersRes = await fetch(`${API_URL}/api/users`, { headers: { 'Authorization': `Bearer ${token}` } });
             const usersData = await usersRes.json();
             setUsers(usersData);
         };

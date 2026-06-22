@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import { socket } from './socket';
 import './InventoryTable.css';
 
@@ -13,7 +14,7 @@ function AdminUsers() {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/users', {
+            const res = await fetch(`${API_URL}/api/users`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 cache: 'no-store'
             });
@@ -27,7 +28,7 @@ function AdminUsers() {
     const handleDeleteUser = async (id, username) => {
         if (!window.confirm(`Are you absolutely sure you want to delete the user: ${username}?`)) return;
         try {
-            const res = await fetch(`http://localhost:3001/api/users/${id}`, {
+            const res = await fetch(`${API_URL}/api/users/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });

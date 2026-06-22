@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const db = require('./database');
@@ -7,10 +8,10 @@ const jwt = require('jsonwebtoken');
 const http = require('http');
 const { Server } = require("socket.io");
 
-const JWT_SECRET = "secret_inventory_key_123";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const server = http.createServer(app);
 const io = new Server(server, {

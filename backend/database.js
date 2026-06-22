@@ -1,59 +1,50 @@
-const sqlite3 = require('sqlite3').verbose();
+const { createClient } = require('@libsql/client');
+require('dotenv').config();
 
-const db = new sqlite3.Database('./inventory.db', (err) => {
-    if (err) {
-        console.error("Error opening database:", err.message);
-    }
-    else {
-        console.log("Connected to the SQLite databse.");
+console.log("Connecting to Turso Cloud Database...");
 
-        db.run(`CREATE TABLE IF NOT EXISTS items (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            category TEXT NOT NULL,
-            quantity INTEGER NOT NULL,
-            price REAL NOT NULL
-        )`, (err) => {
-            if (err) {
-                console.error("Error creating table:", err.message);
-            }
-            else {
-                console.log("Items table ready.");
-            }
-        });
-
-        db.run(`CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            role TEXT NOT NULL,
-            dealer_id INTEGER
-        )`, (err) => {
-            if (err) {
-                console.error("Error creating users table:", err.message);
-            }
-            else {
-                console.log("Users table ready.");
-            }
-        });
-
-        db.run(`CREATE TABLE IF NOT EXISTS orders (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            item_id INTEGER NOT NULL,
-            item_name TEXT NOT NULL,
-            client_username TEXT NOT NULL,
-            dealer_username TEXT NOT NULL,
-            quantity_ordered INTEGER NOT NULL,
-            status TEXT NOT NULL
-        )`, (err) => {
-            if (err) {
-                console.error("Error creating orders table:", err.message);
-            }
-            else {
-                console.log("Orders table ready.");
-            }
-        });
-    }
+const client = createClient({
+    url: process.env.TURSO_DATABASE_URL,
+    authToken: process.env.TURSO_AUTH_TOKEN
 });
+
+// custom compatibility wrapper between local server.js file and turso cloud db
+const db = {
+    run: (sql, params, callback) => {
+        if (typeof params === 'function') {
+            callback = params;
+            params = [];
+        }
+        client.execute({ sql, args: params }).then(result => {
+            // provide expected 'this.lastID' context for sqlite3 callbacks
+            const context = { lastID: result.lastInsertRowid ? Number(result.lastInsertRowid) : 0 };
+            if (callback) callback.call(context, null);
+        }).catch(err => {
+            if (callback) callback(err);
+        });
+    },
+    get: (sql, params, callback) => {
+        if (typeof params === 'function') {
+            callback = params;
+            params = [];
+        }
+        client.execute({ sql, args: params }).then(result => {
+            if (callback) callback(null, result.rows.length > 0 ? result.rows[0] : undefined);
+        }).catch(err => {
+            if (callback) callback(err);
+        });
+    },
+    all: (sql, params, callback) => {
+        if (typeof params === 'function') {
+            callback = params;
+            params = [];
+        }
+        client.execute({ sql, args: params }).then(result => {
+            if (callback) callback(null, result.rows);
+        }).catch(err => {
+            if (callback) callback(err);
+        });
+    }
+};
 
 module.exports = db;

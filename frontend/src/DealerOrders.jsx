@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import { socket } from './socket';
 import './InventoryTable.css';
 import './DealerDashboard.css';
@@ -14,7 +15,7 @@ function DealerOrders() {
     }, []);
 
     const fetchPendingOrders = async () => {
-        const res = await fetch(`http://localhost:3001/api/orders?dealer=${dealerUsername}`, {
+        const res = await fetch(`${API_URL}/api/orders?dealer=${dealerUsername}`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             cache: 'no-store'
         });
@@ -24,7 +25,7 @@ function DealerOrders() {
 
     const handleAction = async (orderId, action) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/orders/${orderId}/status`, {
+            const res = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

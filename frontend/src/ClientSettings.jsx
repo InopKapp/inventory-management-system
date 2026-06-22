@@ -1,3 +1,4 @@
+import { API_URL } from './config';
 import { useNavigate } from 'react-router-dom';
 import './ClientStoreFront.css';
 
@@ -8,7 +9,7 @@ function ClientSettings() {
         if (!window.confirm("Are you sure you want to permanently delete your account? This action cannot be undone.")) return;
 
         try {
-            const res = await fetch('http://localhost:3001/api/users/self', {
+            const res = await fetch(`${API_URL}/api/users/self`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });

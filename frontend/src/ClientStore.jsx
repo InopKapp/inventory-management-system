@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import { socket } from './socket';
 import './ClientStoreFront.css';
 
@@ -22,7 +23,7 @@ function ClientStore() {
     }, []);
 
     const fetchDealers = async () => {
-        const res = await fetch('http://localhost:3001/api/dealers', {
+        const res = await fetch(`${API_URL}/api/dealers`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             cache: 'no-store'
         });
@@ -31,7 +32,7 @@ function ClientStore() {
     }
 
     const fetchCatalog = async () => {
-        const res = await fetch('http://localhost:3001/api/items', {
+        const res = await fetch(`${API_URL}/api/items`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             cache: 'no-store'
         });
@@ -74,7 +75,7 @@ function ClientStore() {
         }
         try {
             await Promise.all(cart.map(cartItem =>
-                fetch('http://localhost:3001/api/orders', {
+                fetch(`${API_URL}/api/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

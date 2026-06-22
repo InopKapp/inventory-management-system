@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import { socket } from './socket';
 import './InventoryTable.css';
 import './AddItemForm.css';
@@ -20,7 +21,7 @@ function AdminInventory() {
 
     const fetchItems = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/items', {
+            const res = await fetch(`${API_URL}/api/items`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                 cache: 'no-store'
             });
@@ -35,7 +36,7 @@ function AdminInventory() {
         event.preventDefault();
         const newItem = { name, category, quantity, price };
         try {
-            const response = await fetch('http://localhost:3001/api/items', {
+            const response = await fetch(`${API_URL}/api/items`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -56,7 +57,7 @@ function AdminInventory() {
 
     const deleteItem = async (id) => {
         try {
-            await fetch(`http://localhost:3001/api/items/${id}`, {
+            await fetch(`${API_URL}/api/items/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
@@ -74,7 +75,7 @@ function AdminInventory() {
     const handleSaveClick = async (id) => {
         const updatedItem = { ...editFormData, id };
         try {
-            await fetch(`http://localhost:3001/api/items/${id}`, {
+            await fetch(`${API_URL}/api/items/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

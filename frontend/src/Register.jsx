@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
@@ -29,7 +30,7 @@ function Register() {
         setSuccess('');
 
         try {
-            const response = await fetch('http://localhost:3001/api/register', {
+            const response = await fetch(`${API_URL}/api/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password, role, dealer_id: null }),

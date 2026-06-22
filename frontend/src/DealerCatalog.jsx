@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import { socket } from './socket';
 import './ClientStoreFront.css';
 import './DealerDashboard.css';
@@ -13,7 +14,7 @@ function DealerCatalog() {
     }, []);
 
     const fetchCatalog = async () => {
-        const res = await fetch('http://localhost:3001/api/items', {
+        const res = await fetch(`${API_URL}/api/items`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             cache: 'no-store'
         });

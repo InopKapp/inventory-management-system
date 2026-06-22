@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from './config';
 import { socket } from './socket';
 import './ClientStoreFront.css';
 
@@ -13,7 +14,7 @@ function ClientOrders() {
     }, []);
 
     const fetchMyOrders = async () => {
-        const res = await fetch(`http://localhost:3001/api/orders?client=${clientUsername}`, {
+        const res = await fetch(`${API_URL}/api/orders?client=${clientUsername}`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             cache: 'no-store'
         });
