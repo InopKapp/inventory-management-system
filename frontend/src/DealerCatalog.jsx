@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { socket } from './socket';
 import './ClientStoreFront.css';
 import './DealerDashboard.css';
 
@@ -7,8 +8,8 @@ function DealerCatalog() {
 
     useEffect(() => {
         fetchCatalog();
-        const intervalId = setInterval(() => fetchCatalog(), 3000);
-        return () => clearInterval(intervalId);
+        socket.on('inventory_updated', fetchCatalog);
+        return () => socket.off('inventory_updated', fetchCatalog);
     }, []);
 
     const fetchCatalog = async () => {

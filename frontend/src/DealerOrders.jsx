@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import './ClientStoreFront.css';
+import { socket } from './socket';
+import './InventoryTable.css';
 import './DealerDashboard.css';
 
 function DealerOrders() {
@@ -8,8 +9,8 @@ function DealerOrders() {
 
     useEffect(() => {
         fetchPendingOrders();
-        const intervalId = setInterval(() => fetchPendingOrders(), 3000);
-        return () => clearInterval(intervalId);
+        socket.on('orders_updated', fetchPendingOrders);
+        return () => socket.off('orders_updated', fetchPendingOrders);
     }, []);
 
     const fetchPendingOrders = async () => {

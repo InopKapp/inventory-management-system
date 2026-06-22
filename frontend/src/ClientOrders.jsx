@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { socket } from './socket';
 import './ClientStoreFront.css';
 
 function ClientOrders() {
@@ -7,12 +8,8 @@ function ClientOrders() {
 
     useEffect(() => {
         fetchMyOrders();
-
-        const intervalId = setInterval(() => {
-            fetchMyOrders();
-        }, 3000);
-
-        return () => clearInterval(intervalId);
+        socket.on('orders_updated', fetchMyOrders);
+        return () => socket.off('orders_updated', fetchMyOrders);
     }, []);
 
     const fetchMyOrders = async () => {

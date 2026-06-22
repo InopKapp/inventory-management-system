@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { socket } from './socket';
 import './InventoryTable.css';
 import './AddItemForm.css';
 
@@ -13,8 +14,8 @@ function AdminInventory() {
 
     useEffect(() => {
         fetchItems();
-        const intervalId = setInterval(() => fetchItems(), 3000);
-        return () => clearInterval(intervalId);
+        socket.on('inventory_updated', fetchItems);
+        return () => socket.off('inventory_updated', fetchItems);
     }, []);
 
     const fetchItems = async () => {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { socket } from './socket';
 import './InventoryTable.css';
 
 function AdminOrders() {
@@ -6,8 +7,8 @@ function AdminOrders() {
 
     useEffect(() => {
         fetchAllOrders();
-        const intervalId = setInterval(() => fetchAllOrders(), 3000);
-        return () => clearInterval(intervalId);
+        socket.on('orders_updated', fetchAllOrders);
+        return () => socket.off('orders_updated', fetchAllOrders);
     }, []);
 
     const fetchAllOrders = async () => {

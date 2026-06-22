@@ -4,10 +4,21 @@ const db = require('./database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const http = require('http');
+const { Server } = require("socket.io");
+
 const JWT_SECRET = "secret_inventory_key_123";
 
 const app = express();
 const PORT = 3001;
+
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE"]
+    }
+});
 
 app.use(cors());
 app.use(express.json());
@@ -49,6 +60,7 @@ app.post('/api/items', authenticateToken, (req, res) => {
                 res.status(500).json({ error: err.message });
                 return;
             }
+            io.emit('inventory_updated');
             res.json({ id: this.lastID, name, category, quantity, price });
         }
     );
@@ -67,6 +79,7 @@ app.put('/api/items/:id', authenticateToken, (req, res) => {
                 res.status(500).json({ error: err.message });
                 return;
             }
+            io.emit('inventory_updated');
             res.json({ message: "Item updated successfully" });
         }
     );
@@ -83,6 +96,7 @@ app.delete('/api/items/:id', authenticateToken, (req, res) => {
             res.status(500).json({ error: err.message });
             return;
         }
+        io.emit('inventory_updated');
         res.json({ message: "Item deleted successfully" });
     });
 });
@@ -100,6 +114,7 @@ app.post('/api/register', async (req, res) => {
                     res.status(400).json({ error: "Username already exists or invalid data." });
                     return;
                 }
+                io.emit('users_updated');
                 res.json({ message: "User registered successfully.", userID: this.lastID });
             }
         );
@@ -153,6 +168,7 @@ app.post('/api/orders', authenticateToken, (req, res) => {
                 res.status(500).json({ error: "Failed to place order." });
                 return;
             }
+            io.emit('orders_updated');
             res.json({ message: "Order placed successfully.", orderID: this.lastID });
         }
     )
@@ -207,6 +223,8 @@ app.put('/api/orders/:id/status', authenticateToken, (req, res) => {
                     if (err) return res.status(500).json({ error: "Failed to deduct inventory." });
 
                     db.run("UPDATE orders SET status = 'approved' WHERE id = ?", [id], (err) => {
+                        io.emit('orders_updated');
+                        io.emit('inventory_updated');
                         res.json({ message: "Order approved and inventory deducted." });
                     });
                 });
@@ -215,6 +233,7 @@ app.put('/api/orders/:id/status', authenticateToken, (req, res) => {
     } else {
         db.run("UPDATE orders SET status = ? WHERE id = ?", [status, id], function (err) {
             if (err) return res.status(500).json({ error: "Failed to update order status." });
+            io.emit('orders_updated');
             res.json({ message: `Order marked as ${status}` });
         });
     }
@@ -236,6 +255,7 @@ app.delete('/api/users/self', authenticateToken, (req, res) => {
     const id = req.user.id;
     db.run("DELETE FROM users WHERE id = ?", [id], (err) => {
         if (err) return res.status(500).json({ error: "Failed to delete account." });
+        io.emit('users_updated');
         res.json({ message: "Account deleted successfully." });
     });
 });
@@ -265,10 +285,11 @@ app.delete('/api/users/:id', authenticateToken, (req, res) => {
 
     db.run("DELETE FROM users WHERE id = ?", [id], (err) => {
         if (err) return res.status(500).json({ error: "Failed to delete user." });
+        io.emit('users_updated');
         res.json({ message: "User deleted successfully" });
     });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { socket } from './socket';
 import './ClientStoreFront.css';
 
 function ClientStore() {
@@ -12,13 +13,12 @@ function ClientStore() {
     useEffect(() => {
         fetchCatalog();
         fetchDealers();
-
-        const intervalId = setInterval(() => {
-            fetchCatalog();
-            fetchDealers();
-        }, 3000);
-
-        return () => clearInterval(intervalId);
+        socket.on('inventory_updated', fetchCatalog);
+        socket.on('users_updated', fetchDealers);
+        return () => {
+            socket.off('inventory_updated', fetchCatalog);
+            socket.off('users_updated', fetchDealers);
+        };
     }, []);
 
     const fetchDealers = async () => {
